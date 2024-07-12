@@ -5,7 +5,7 @@
 ## Installation
 
 ```bash
-composer require calebporzio/awesome-helpers
+composer require coliving/awesome-helpers
 ```
 
 ## Helpers

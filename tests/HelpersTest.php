@@ -4,6 +4,7 @@ namespace Calebporzio\AwesomeHelpers\Tests;
 
 use Illuminate\Support\Facades\DB;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Calebporzio\AwesomeHelpers\AwesomeHelpersServiceProvider;
 use Illuminate\Support\Carbon;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
@@ -18,15 +19,13 @@ class HelpersTest extends TestCase
         (new AwesomeHelpersServiceProvider(null))->boot();
     }
 
-    /** @test */
-    public function carbon()
+    public function testCarbon()
     {
         $this->assertInstanceOf(Carbon::class, carbon());
         $this->assertEquals(Carbon::parse('Jan 1 2017'), carbon('Jan 1 2017'));
     }
 
-    /** @test */
-    public function chain()
+    public function testChain()
     {
         $mock = \Mockery::mock();
         $mock->shouldReceive('first')->once()->andReturn('first thing');
@@ -38,8 +37,7 @@ class HelpersTest extends TestCase
         $this->assertEquals('third thing', $result);
     }
 
-    /** @test */
-    function connection()
+    public function testConnection()
     {
         // This one requires too much bootstrapping to test.
         $this->assertTrue(function_exists('connection'));
@@ -56,30 +54,25 @@ class HelpersTest extends TestCase
         $this->assertTrue(true);
     }
 
-    /** @test */
-    public function faker()
+    public function testFaker()
     {
         $this->assertInstanceOf(Generator::class, faker());
         $this->assertIsString(faker('name'));
     }
 
-    /** @test */
-    public function user()
+    public function testUser()
     {
         // This one is too simple to go through the trouble of testing.
         $this->assertTrue(function_exists('user'));
     }
 
-    /**
-     * @test
-     * @dataProvider moneyProvider
-     */
-    public function money($expected, $input, $showCents, $locale)
+    #[DataProvider('moneyProvider')]
+    public function testMoney($expected, $input, $showCents, $locale)
     {
         $this->assertEquals($expected, money($input, $showCents, $locale));
     }
 
-    public function moneyProvider()
+    public static function moneyProvider()
     {
         return [
             ['$12.00', 12, true, 'en_US.utf-8'],
@@ -91,31 +84,27 @@ class HelpersTest extends TestCase
         ];
     }
 
-    /** @test */
-    function ok()
+    public function testOk()
     {
         // This one is too simple to go through the trouble of testing.
         $this->assertTrue(function_exists('ok'));
     }
 
-    /** @test */
-    function str_between()
+    public function testStrBetween()
     {
         $this->assertEquals('something',
             str_between('before something after', 'before ', ' after')
         );
     }
 
-    /** @test */
-    function str_extract()
+    public function testStrExtract()
     {
         $this->assertEquals('something', str_extract('before something after', '/before (.*) after/'));
 
         $this->assertNull(str_extract('before something after', 'other-thing'));
     }
 
-    /** @test */
-    function str_match()
+    public function testStrMatch()
     {
         $this->assertTrue(str_match('before something after', '/before (.*) after/'));
 
@@ -126,22 +115,19 @@ class HelpersTest extends TestCase
         $this->assertFalse(str_match('hidden', 'found'));
     }
 
-    /** @test */
-    function str_validate()
+    public function testStrValidate()
     {
         // @todo - use Orchestra TestBench or something to test things
         // that depend on Laravel Facades and globals.
         $this->assertTrue(true);
     }
 
-    /** @test */
-    function str_wrap()
+    public function testStrWrap()
     {
         $this->assertEquals('--something--', str_wrap('something', '--'));
     }
 
-    /** @test */
-    function stopwatch()
+    public function testStopwatch()
     {
         // 10000 milliseconds is 0.01 seconds.
         $time = stopwatch(function () { usleep(10000); });
@@ -149,8 +135,7 @@ class HelpersTest extends TestCase
         $this->assertEquals(0.01, round($time, 2));
     }
 
-    /** @test */
-    function swap()
+    public function testSwap()
     {
         $a = 1;
         $b = 2;
@@ -161,8 +146,7 @@ class HelpersTest extends TestCase
         $this->assertEquals(1, $b);
     }
 
-    /** @test */
-    function tinker()
+    public function testTinker()
     {
         $mock = \Mockery::mock('overload:'.\Psy\Shell::class);
         $mock->shouldReceive('setScopeVariables');
@@ -177,5 +161,7 @@ class HelpersTest extends TestCase
 
         $there = 'value';
         tinker('hey', $there);
+
+        $this->addToAssertionCount(1);
     }
 }
